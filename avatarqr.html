@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title><아바타:불과 재> SNS 이벤트</title>
+  <!-- 모바일 반응형 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* 화면 전체를 쓰는 컨테이너 */
+    .poster-wrap {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* 포스터 이미지를 창 크기에 맞춰 반응형으로 표시 (전체 다 보이도록) */
+    .poster-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;  /* 비율 유지 + 전체 이미지 보이게 */
+      display: block;
+    }
+
+    /* 이미지 안 '해시태그 복사하기' 버튼에 해당하는 클릭 영역 */
+    .copy-area {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 28%;   /* 세로 위치 (퍼센트 값, 필요시 조정) */
+      width: 26%;    /* 버튼 가로 범위 비율 */
+      height: 5.5%;    /* 버튼 세로 범위 비율 */
+      cursor: pointer;
+
+      /* 위치 조정용 가이드 — 테스트할 때만 주석 해제해서 확인하세요
+      background: rgba(255, 0, 0, 0.3);
+      */
+    }
+      
+    }
+
+    /* 복사 완료 토스트 메시지 */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="poster-wrap">
+    <!-- 이미지 파일 이름/경로만 실제 파일에 맞게 조정 -->
+    <img src="avatar_event_poster.png" alt="SNS 이벤트 포스터">
+
+    <!-- '해시태그 복사하기' 버튼 위치에 맞춰 클릭 영역 배치 -->
+    <div class="copy-area" id="copyArea"></div>
+  </div>
+
+  <!-- 복사 완료 안내 문구 -->
+  <div class="toast" id="toast">해시태그가 복사되었습니다!</div>
+
+  <script>
+    // 복사할 해시태그 문구
+    const hashtags =
+      "#아바타불과재 #아바타 #불의판도라스퀘어 #12월17일극장대개봉";
+
+    const copyArea = document.getElementById("copyArea");
+    const toast = document.getElementById("toast");
+
+    async function copyTags() {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(hashtags);
+        } else {
+          // 구형 브라우저 대응
+          const textarea = document.createElement("textarea");
+          textarea.value = hashtags;
+          textarea.style.position = "fixed";
+          textarea.style.opacity = "0";
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+        }
+        showToast();
+      } catch (err) {
+        console.error(err);
+        alert("복사 중 오류가 발생했습니다. 직접 복사해 주세요.");
+      }
+    }
+
+    function showToast() {
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    copyArea.addEventListener("click", copyTags);
+  </script>
+</body>
+</html>
